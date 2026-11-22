@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="panel form-panel">
+    <p class="eyebrow">{{ 'Chỉnh sửa' if note else 'Nội dung mới' }}</p>
+    <h1>{{ title }}</h1>
+    <form method="post" class="stack-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <label for="title">Tiêu đề</label>
+      <input id="title" name="title" type="text" required maxlength="200" value="{{ note.title if note else '' }}" autofocus>
+      <label for="content">Nội dung</label>
+      <textarea id="content" name="content" rows="12" maxlength="20000" placeholder="Viết điều bạn muốn lưu...">{{ note.content if note else '' }}</textarea>
+      <div class="form-actions">
+        <button class="button" type="submit">Lưu ghi chú</button>
+        <a class="button button-secondary" href="{{ url_for('notes.index') }}">Hủy</a>
+      </div>
+    </form>
+  </section>
+{% endblock %}

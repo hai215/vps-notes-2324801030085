@@ -1,0 +1,21 @@
+[Unit]
+Description=VPS Notes Flask application
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=vpsnotes
+Group=vpsnotes
+WorkingDirectory=/var/www/vps-notes
+EnvironmentFile=/etc/vps-notes.env
+ExecStart=/var/www/vps-notes/.venv/bin/gunicorn --workers 3 --bind 127.0.0.1:8000 wsgi:app
+Restart=on-failure
+RestartSec=5
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+
+[Install]
+WantedBy=multi-user.target

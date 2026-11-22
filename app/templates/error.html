@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <section class="panel narrow empty-state">
+    <p class="eyebrow">{{ title }}</p>
+    <h1>{{ message }}</h1>
+    <a class="button" href="{{ url_for('notes.index') if g.user else url_for('auth.login') }}">Về trang chính</a>
+  </section>
+{% endblock %}

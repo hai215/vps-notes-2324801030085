@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow">Không gian cá nhân</p>
+      <h1>Ghi chú của tôi</h1>
+    </div>
+    <a class="button" href="{{ url_for('notes.create') }}">+ Ghi chú mới</a>
+  </div>
+
+  {% if notes %}
+    <div class="note-grid">
+      {% for note in notes %}
+        <article class="panel note-card">
+          <p class="note-date">Cập nhật {{ note.updated_at.strftime('%d/%m/%Y %H:%M') }}</p>
+          <h2><a href="{{ url_for('notes.detail', note_id=note.id) }}">{{ note.title }}</a></h2>
+          <p class="note-preview">{{ note.content|truncate(180) }}</p>
+          <div class="card-actions">
+            <a href="{{ url_for('notes.detail', note_id=note.id) }}">Xem</a>
+            <a href="{{ url_for('notes.edit', note_id=note.id) }}">Sửa</a>
+          </div>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <section class="panel empty-state">
+      <h2>Chưa có ghi chú nào</h2>
+      <p class="muted">Tạo ghi chú đầu tiên để bắt đầu.</p>
+      <a class="button" href="{{ url_for('notes.create') }}">Tạo ghi chú</a>
+    </section>
+  {% endif %}
+{% endblock %}

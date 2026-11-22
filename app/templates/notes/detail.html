@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <article class="panel detail-panel">
+    <div class="page-heading compact">
+      <div>
+        <p class="note-date">Cập nhật {{ note.updated_at.strftime('%d/%m/%Y %H:%M') }}</p>
+        <h1>{{ note.title }}</h1>
+      </div>
+      <div class="card-actions">
+        <a class="button button-secondary" href="{{ url_for('notes.edit', note_id=note.id) }}">Sửa</a>
+        <form class="inline-form" method="post" action="{{ url_for('notes.delete', note_id=note.id) }}">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+          <button class="button button-danger" type="submit">Xóa</button>
+        </form>
+      </div>
+    </div>
+    <div class="note-content">{{ note.content }}</div>
+    <a class="back-link" href="{{ url_for('notes.index') }}">← Quay lại danh sách</a>
+  </article>
+{% endblock %}
