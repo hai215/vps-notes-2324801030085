@@ -3,24 +3,28 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#151b35">
     <title>{{ title }} · VPS Notes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=2">
   </head>
   <body>
     <header class="site-header">
       <div class="container nav-wrap">
-        <a class="brand" href="{{ url_for('notes.index') if g.user else url_for('auth.login') }}">VPS Notes</a>
+        <a class="brand" href="{{ url_for('notes.index') if g.user else url_for('auth.login') }}">
+          <span class="brand-mark">✦</span>
+          <span>VPS Notes</span>
+        </a>
         <nav aria-label="Điều hướng chính">
           {% if g.user %}
-            <a href="{{ url_for('notes.index') }}">Ghi chú</a>
-            <span class="user-label">{{ g.user.username }}</span>
+            <a href="{{ url_for('notes.index') }}">Không gian của tôi</a>
+            <span class="user-label">@{{ g.user.username }}</span>
             <form class="inline-form" method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
               <button class="button button-link" type="submit">Đăng xuất</button>
             </form>
           {% else %}
             <a href="{{ url_for('auth.login') }}">Đăng nhập</a>
-            <a class="button button-small" href="{{ url_for('auth.register') }}">Đăng ký</a>
+            <a class="button button-small" href="{{ url_for('auth.register') }}">Bắt đầu</a>
           {% endif %}
         </nav>
       </div>
@@ -40,7 +44,10 @@
     </main>
 
     <footer class="site-footer">
-      <div class="container">Flask · PostgreSQL · Jinja2</div>
+      <div class="container">
+        <span>VPS Notes · không gian ghi chú cá nhân</span>
+        <span>Flask · PostgreSQL · Nginx</span>
+      </div>
     </footer>
   </body>
 </html>

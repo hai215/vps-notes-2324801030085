@@ -5,29 +5,31 @@
     <div>
       <p class="eyebrow">Không gian cá nhân</p>
       <h1>Ghi chú của tôi</h1>
+      <p class="muted">Lưu lại ý tưởng, kế hoạch và những điều quan trọng.</p>
     </div>
-    <a class="button" href="{{ url_for('notes.create') }}">+ Ghi chú mới</a>
+    <a class="button" href="{{ url_for('notes.create') }}">＋ Ghi chú mới</a>
   </div>
 
   {% if notes %}
     <div class="note-grid">
       {% for note in notes %}
         <article class="panel note-card">
-          <p class="note-date">Cập nhật {{ note.updated_at.strftime('%d/%m/%Y %H:%M') }}</p>
+          <p class="note-date">CẬP NHẬT {{ note.updated_at.strftime('%d/%m/%Y · %H:%M') }}</p>
           <h2><a href="{{ url_for('notes.detail', note_id=note.id) }}">{{ note.title }}</a></h2>
           <p class="note-preview">{{ note.content|truncate(180) }}</p>
           <div class="card-actions">
-            <a href="{{ url_for('notes.detail', note_id=note.id) }}">Xem</a>
-            <a href="{{ url_for('notes.edit', note_id=note.id) }}">Sửa</a>
+            <a class="button button-small" href="{{ url_for('notes.detail', note_id=note.id) }}">Xem ghi chú</a>
+            <a class="button button-small button-secondary" href="{{ url_for('notes.edit', note_id=note.id) }}">Sửa</a>
           </div>
         </article>
       {% endfor %}
     </div>
   {% else %}
     <section class="panel empty-state">
-      <h2>Chưa có ghi chú nào</h2>
-      <p class="muted">Tạo ghi chú đầu tiên để bắt đầu.</p>
-      <a class="button" href="{{ url_for('notes.create') }}">Tạo ghi chú</a>
+      <div class="empty-icon">✎</div>
+      <h2>Bắt đầu với ghi chú đầu tiên</h2>
+      <p class="muted">Tạo một nơi nhỏ gọn để lưu ý tưởng và công việc của bạn.</p>
+      <a class="button" href="{{ url_for('notes.create') }}">Tạo ghi chú đầu tiên</a>
     </section>
   {% endif %}
 {% endblock %}
