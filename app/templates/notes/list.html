@@ -1,35 +1,87 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="page-heading">
+  <section class="dashboard-hero">
     <div>
-      <p class="eyebrow">Không gian cá nhân</p>
-      <h1>Ghi chú của tôi</h1>
-      <p class="muted">Lưu lại ý tưởng, kế hoạch và những điều quan trọng.</p>
+      <p class="eyebrow">MAGIC WORKSPACE</p>
+      <h1>Chào mừng trở lại, {{ g.user.username }}</h1>
+      <p class="hero-subtitle">Ghi lại điều quan trọng. Tìm kiếm nhanh. Làm việc nhẹ nhàng hơn.</p>
     </div>
-    <a class="button" href="{{ url_for('notes.create') }}">＋ Ghi chú mới</a>
-  </div>
+    <div class="hero-stat"><strong>{{ notes|length }}</strong><span>ghi chú</span></div>
+  </section>
 
-  {% if notes %}
-    <div class="note-grid">
-      {% for note in notes %}
-        <article class="panel note-card">
-          <p class="note-date">CẬP NHẬT {{ note.updated_at.strftime('%d/%m/%Y · %H:%M') }}</p>
-          <h2><a href="{{ url_for('notes.detail', note_id=note.id) }}">{{ note.title }}</a></h2>
-          <p class="note-preview">{{ note.content|truncate(180) }}</p>
-          <div class="card-actions">
-            <a class="button button-small" href="{{ url_for('notes.detail', note_id=note.id) }}">Xem ghi chú</a>
-            <a class="button button-small button-secondary" href="{{ url_for('notes.edit', note_id=note.id) }}">Sửa</a>
-          </div>
-        </article>
-      {% endfor %}
+  <section class="panel quick-add">
+    <div class="section-heading">
+      <div>
+        <p class="eyebrow">GHI CHÚ NHANH</p>
+        <h2>Thêm một ghi chú</h2>
+      </div>
+      <span class="section-hint">Lưu ý tưởng trong vài giây</span>
     </div>
-  {% else %}
-    <section class="panel empty-state">
-      <div class="empty-icon">✎</div>
-      <h2>Bắt đầu với ghi chú đầu tiên</h2>
-      <p class="muted">Tạo một nơi nhỏ gọn để lưu ý tưởng và công việc của bạn.</p>
-      <a class="button" href="{{ url_for('notes.create') }}">Tạo ghi chú đầu tiên</a>
-    </section>
-  {% endif %}
+    <form method="post" action="{{ url_for('notes.create') }}" class="quick-form">
+      <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+      <input name="title" type="text" maxlength="200" placeholder="Tiêu đề ghi chú..." required>
+      <textarea name="content" rows="3" maxlength="20000" placeholder="Bạn đang nghĩ gì? Viết xuống đây..."></textarea>
+      <div class="quick-form-footer">
+        <span class="muted">Nội dung được lưu riêng cho tài khoản của bạn.</span>
+        <button class="button" type="submit">＋ Lưu ghi chú</button>
+      </div>
+    </form>
+  </section>
+
+  <section class="notes-section">
+    <div class="section-heading notes-heading">
+      <div>
+        <p class="eyebrow">THƯ VIỆN CỦA BẠN</p>
+        <h2>Ghi chú gần đây</h2>
+      </div>
+      <a class="button button-secondary" href="{{ url_for('notes.create') }}">Mở trình soạn thảo</a>
+    </div>
+
+    {% if notes %}
+      <div class="note-grid" id="notes-grid">
+        {% for note in notes %}
+          <article class="panel note-card searchable-note" data-search="{{ note.title }} {{ note.content }}">
+            <div class="note-card-top">
+              <span class="note-badge">NOTE {{ '%02d'|format(loop.index) }}</span>
+              <span class="note-date">{{ note.updated_at.strftime('%d/%m/%Y · %H:%M') }}</span>
+            </div>
+            <h2><a href="{{ url_for('notes.detail', note_id=note.id) }}">{{ note.title }}</a></h2>
+            <p class="note-preview">{{ note.content|truncate(180) }}</p>
+            <div class="card-actions">
+              <a class="button button-small" href="{{ url_for('notes.detail', note_id=note.id) }}">Xem</a>
+              <a class="button button-small button-secondary" href="{{ url_for('notes.edit', note_id=note.id) }}">Sửa</a>
+              <form class="inline-form card-delete" method="post" action="{{ url_for('notes.delete', note_id=note.id) }}" onsubmit="return confirm('Xóa ghi chú này?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
+                <button class="button button-small button-danger" type="submit">Xóa</button>
+              </form>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+      <p class="no-results muted" id="no-results" hidden>Không tìm thấy ghi chú phù hợp.</p>
+    {% else %}
+      <section class="panel empty-state">
+        <div class="empty-icon">✎</div>
+        <h2>Chưa có ghi chú nào</h2>
+        <p class="muted">Tạo ghi chú đầu tiên ở khung bên trên để bắt đầu.</p>
+      </section>
+    {% endif %}
+  </section>
+
+  <script>
+    const search = document.querySelector('#note-search');
+    const cards = [...document.querySelectorAll('.searchable-note')];
+    const empty = document.querySelector('#no-results');
+    search?.addEventListener('input', () => {
+      const query = search.value.trim().toLowerCase();
+      let visible = 0;
+      cards.forEach(card => {
+        const match = card.dataset.search.toLowerCase().includes(query);
+        card.hidden = !match;
+        if (match) visible++;
+      });
+      if (empty) empty.hidden = visible !== 0;
+    });
+  </script>
 {% endblock %}

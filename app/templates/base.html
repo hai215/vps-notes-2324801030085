@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="theme-color" content="#151b35">
     <title>{{ title }} · VPS Notes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=3">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=4">
   </head>
   <body>
     <header class="site-header">
@@ -16,7 +16,11 @@
         </a>
         <nav aria-label="Điều hướng chính">
           {% if g.user %}
-            <a href="{{ url_for('notes.index') }}">Không gian của tôi</a>
+            <label class="nav-search" aria-label="Tìm kiếm ghi chú">
+              <span>⌕</span>
+              <input id="note-search" type="search" placeholder="Tìm ghi chú..." autocomplete="off">
+            </label>
+            <a href="{{ url_for('notes.index') }}">Ghi chú</a>
             <span class="user-label">@{{ g.user.username }}</span>
             <form class="inline-form" method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
