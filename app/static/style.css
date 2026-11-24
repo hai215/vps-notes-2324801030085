@@ -121,3 +121,16 @@ nav .button-link { color: rgba(255,255,255,.76); }
   .note-grid { grid-template-columns: 1fr; }
   .site-footer .container { display: block; }
 }
+/* Authentication layout */
+.auth-stage { display: flex; justify-content: center; padding: 12px 0 20px; }
+.auth-card-wide { width: min(100%, 610px); margin: 0 auto; padding: 42px 48px; }
+.auth-intro { margin-bottom: 26px; }
+.auth-intro h1 { margin-bottom: 12px; }
+.auth-intro .muted { max-width: 440px; margin-bottom: 0; }
+.auth-submit { width: 100%; margin-top: 17px; padding: 13px 18px; }
+.auth-card-wide .form-footer { margin-top: 28px; }
+
+@media (max-width: 620px) {
+  .auth-card-wide { padding: 30px 22px; }
+  .auth-stage { padding-top: 0; }
+}
