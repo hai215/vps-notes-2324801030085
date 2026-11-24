@@ -3,32 +3,29 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="theme-color" content="#151b35">
-    <title>{{ title }} · VPS Notes</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=4">
+    <meta name="theme-color" content="#212529">
+    <title>{{ title }} · Magic Notes</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}?v=5">
   </head>
   <body>
     <header class="site-header">
       <div class="container nav-wrap">
-        <a class="brand" href="{{ url_for('notes.index') if g.user else url_for('auth.login') }}">
-          <span class="brand-mark">✦</span>
-          <span>VPS Notes</span>
-        </a>
+        <a class="brand" href="{{ url_for('notes.index') if g.user else url_for('auth.login') }}">Magic Notes</a>
         <nav aria-label="Điều hướng chính">
           {% if g.user %}
-            <label class="nav-search" aria-label="Tìm kiếm ghi chú">
-              <span>⌕</span>
-              <input id="note-search" type="search" placeholder="Tìm ghi chú..." autocomplete="off">
-            </label>
-            <a href="{{ url_for('notes.index') }}">Ghi chú</a>
-            <span class="user-label">@{{ g.user.username }}</span>
-            <form class="inline-form" method="post" action="{{ url_for('auth.logout') }}">
+            <a class="home-link" href="{{ url_for('notes.index') }}">Home</a>
+            <form class="nav-search" id="search-form" onsubmit="return false;">
+              <input id="note-search" type="search" placeholder="Search" autocomplete="off">
+              <button type="submit">Search</button>
+            </form>
+            <span class="user-label">{{ g.user.username }}</span>
+            <form class="inline-form logout-form" method="post" action="{{ url_for('auth.logout') }}">
               <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-              <button class="button button-link" type="submit">Đăng xuất</button>
+              <button class="button button-link" type="submit">Logout</button>
             </form>
           {% else %}
-            <a href="{{ url_for('auth.login') }}">Đăng nhập</a>
-            <a class="button button-small" href="{{ url_for('auth.register') }}">Bắt đầu</a>
+            <a href="{{ url_for('auth.login') }}">Login</a>
+            <a class="button button-small" href="{{ url_for('auth.register') }}">Register</a>
           {% endif %}
         </nav>
       </div>
@@ -48,10 +45,7 @@
     </main>
 
     <footer class="site-footer">
-      <div class="container">
-        <span>VPS Notes · không gian ghi chú cá nhân</span>
-        <span>Flask · PostgreSQL · Nginx</span>
-      </div>
+      <div class="container">Magic Notes · Flask · PostgreSQL</div>
     </footer>
   </body>
 </html>

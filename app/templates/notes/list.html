@@ -1,87 +1,65 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <section class="dashboard-hero">
-    <div>
-      <p class="eyebrow">MAGIC WORKSPACE</p>
-      <h1>Chào mừng trở lại, {{ g.user.username }}</h1>
-      <p class="hero-subtitle">Ghi lại điều quan trọng. Tìm kiếm nhanh. Làm việc nhẹ nhàng hơn.</p>
-    </div>
-    <div class="hero-stat"><strong>{{ notes|length }}</strong><span>ghi chú</span></div>
+  <section class="magic-welcome">
+    <h1>Welcome To Magic Notes</h1>
   </section>
 
-  <section class="panel quick-add">
-    <div class="section-heading">
-      <div>
-        <p class="eyebrow">GHI CHÚ NHANH</p>
-        <h2>Thêm một ghi chú</h2>
-      </div>
-      <span class="section-hint">Lưu ý tưởng trong vài giây</span>
-    </div>
-    <form method="post" action="{{ url_for('notes.create') }}" class="quick-form">
+  <section class="magic-add panel">
+    <h2>Add a note</h2>
+    <form method="post" action="{{ url_for('notes.create') }}" id="quick-note-form">
       <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-      <input name="title" type="text" maxlength="200" placeholder="Tiêu đề ghi chú..." required>
-      <textarea name="content" rows="3" maxlength="20000" placeholder="Bạn đang nghĩ gì? Viết xuống đây..."></textarea>
-      <div class="quick-form-footer">
-        <span class="muted">Nội dung được lưu riêng cho tài khoản của bạn.</span>
-        <button class="button" type="submit">＋ Lưu ghi chú</button>
+      <input type="hidden" name="title" id="quick-note-title" value="New note">
+      <textarea name="content" id="quick-note-content" rows="4" placeholder="Write your note here..." required></textarea>
+      <div class="magic-form-actions">
+        <button class="magic-add-button" type="submit">Add Note</button>
       </div>
     </form>
   </section>
 
-  <section class="notes-section">
-    <div class="section-heading notes-heading">
-      <div>
-        <p class="eyebrow">THƯ VIỆN CỦA BẠN</p>
-        <h2>Ghi chú gần đây</h2>
-      </div>
-      <a class="button button-secondary" href="{{ url_for('notes.create') }}">Mở trình soạn thảo</a>
-    </div>
-
+  <section class="magic-notes">
+    <h2>Your Notes</h2>
     {% if notes %}
-      <div class="note-grid" id="notes-grid">
+      <div class="magic-note-grid" id="notes-grid">
         {% for note in notes %}
-          <article class="panel note-card searchable-note" data-search="{{ note.title }} {{ note.content }}">
-            <div class="note-card-top">
-              <span class="note-badge">NOTE {{ '%02d'|format(loop.index) }}</span>
-              <span class="note-date">{{ note.updated_at.strftime('%d/%m/%Y · %H:%M') }}</span>
-            </div>
-            <h2><a href="{{ url_for('notes.detail', note_id=note.id) }}">{{ note.title }}</a></h2>
-            <p class="note-preview">{{ note.content|truncate(180) }}</p>
-            <div class="card-actions">
-              <a class="button button-small" href="{{ url_for('notes.detail', note_id=note.id) }}">Xem</a>
-              <a class="button button-small button-secondary" href="{{ url_for('notes.edit', note_id=note.id) }}">Sửa</a>
-              <form class="inline-form card-delete" method="post" action="{{ url_for('notes.delete', note_id=note.id) }}" onsubmit="return confirm('Xóa ghi chú này?');">
+          <article class="magic-note searchable-note" data-search="{{ note.title }} {{ note.content }}">
+            <h3><a href="{{ url_for('notes.detail', note_id=note.id) }}">{{ note.title }}</a></h3>
+            <p>{{ note.content|truncate(180) }}</p>
+            <div class="magic-note-actions">
+              <a class="magic-edit" href="{{ url_for('notes.edit', note_id=note.id) }}">Edit Note</a>
+              <form method="post" action="{{ url_for('notes.delete', note_id=note.id) }}" onsubmit="return confirm('Delete this note?');">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token }}">
-                <button class="button button-small button-danger" type="submit">Xóa</button>
+                <button class="magic-delete" type="submit">Delete Note</button>
               </form>
             </div>
           </article>
         {% endfor %}
       </div>
-      <p class="no-results muted" id="no-results" hidden>Không tìm thấy ghi chú phù hợp.</p>
+      <p class="magic-no-results" id="no-results" hidden>No notes found.</p>
     {% else %}
-      <section class="panel empty-state">
-        <div class="empty-icon">✎</div>
-        <h2>Chưa có ghi chú nào</h2>
-        <p class="muted">Tạo ghi chú đầu tiên ở khung bên trên để bắt đầu.</p>
-      </section>
+      <p class="magic-empty">You do not have any notes yet.</p>
     {% endif %}
   </section>
 
   <script>
     const search = document.querySelector('#note-search');
     const cards = [...document.querySelectorAll('.searchable-note')];
-    const empty = document.querySelector('#no-results');
+    const noResults = document.querySelector('#no-results');
     search?.addEventListener('input', () => {
       const query = search.value.trim().toLowerCase();
-      let visible = 0;
+      let count = 0;
       cards.forEach(card => {
-        const match = card.dataset.search.toLowerCase().includes(query);
-        card.hidden = !match;
-        if (match) visible++;
+        const show = card.dataset.search.toLowerCase().includes(query);
+        card.hidden = !show;
+        if (show) count++;
       });
-      if (empty) empty.hidden = visible !== 0;
+      if (noResults) noResults.hidden = count > 0;
+    });
+
+    document.querySelector('#quick-note-form')?.addEventListener('submit', () => {
+      const text = document.querySelector('#quick-note-content').value.trim();
+      const title = text.split(/\r?\n/)[0].slice(0, 200) || 'New note';
+      document.querySelector('#quick-note-title').value = title;
     });
   </script>
 {% endblock %}
